@@ -11,5 +11,5 @@ func GetDatabaseConnectionUri() string {
 	if password == "" {
 		panic("'POSTGRES_CONN_PASSWORD' environment variable must be set")
 	}
-	return fmt.Sprintf("postgresql://postgres:%s!@localhost:5433/postgres_good-reads?sslmode=disable", password)
+	return fmt.Sprintf("postgres://postgres:%s@localhost:5433/good-reads?sslmode=disable", password)
 }

@@ -2,7 +2,6 @@ package article
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/adi221/good-reads/pkg/schema"
 	"github.com/graphql-go/graphql"
@@ -24,7 +23,6 @@ type TempArticle struct {
 }
 
 func articleResolver(p graphql.ResolveParams) (interface{}, error) {
-	fmt.Println(p.Args)
 	id, ok := p.Args["id"]
 	if !ok {
 		return nil, errors.New("ID is missing")
