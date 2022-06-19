@@ -2,10 +2,35 @@ create table schema_version (
   version text not null
 );
 
+create table users (
+  id uuid not null,
+  username varchar(40) not null unique,
+  email varchar(255) not null,
+  password varchar not null,
+  "createdAt" timestamp with time zone not null default now(),
+  "updatedAt" timestamp with time zone null,
+
+  primary key (id)
+);
+
+create table categories (
+  id uuid not null,
+  "userId" uuid not null,
+  title varchar(255) not null,
+  "createdAt" timestamp with time zone not null default now(),
+  "updatedAt" timestamp with time zone null,
+
+  primary key (id),
+  unique ("userId", title),
+  foreign key ("userId") references users(id) on delete cascade
+);
+
+create type article_status as enum('unread', 'read');
+
 create table articles (
-  id bigserial not null,
-  user_id int not null,
-  category_id int null,
+  id uuid not null,
+  "userId" uuid not null,
+  "categoryId" uuid null,
   title text not null,
   text text,
   html text,
@@ -13,12 +38,12 @@ create table articles (
   image text,
   hash text not null,
   status article_status default 'unread',
-  published_at timestamp with time zone null,
-  created_at timestamp with time zone not null default now(),
-  updated_at timestamp with time zone null,
+  "createdAt" timestamp with time zone not null default now(),
+  "updatedAt" timestamp with time zone null,
     
   primary key (id),
-  unique (user_id, hash),
-  foreign key (user_id) references users(id) on delete cascade,
-  foreign key (category_id) references categories(id) on delete set null
+  unique ("userId", hash),
+  foreign key ("userId") references users(id) on delete cascade,
+  foreign key ("categoryId") references categories(id) on delete set null
 );
+

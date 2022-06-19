@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/adi221/good-reads/pkg/api"
@@ -12,7 +11,6 @@ import (
 
 func main() {
 	conf := config.NewConfig()
-	fmt.Println(conf.General.DatabaseURI)
 
 	database, err := db.NewDB(conf.General.DatabaseURI)
 	if err != nil {
