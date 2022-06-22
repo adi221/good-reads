@@ -3,7 +3,7 @@ create table schema_version (
 );
 
 create table users (
-  id uuid not null,
+  id bigserial not null,
   username varchar(40) not null unique,
   email varchar(255) not null,
   password varchar not null,
@@ -14,8 +14,8 @@ create table users (
 );
 
 create table categories (
-  id uuid not null,
-  "userId" uuid not null,
+  id bigserial not null,
+  "userId" int not null,
   title varchar(255) not null,
   "createdAt" timestamp with time zone not null default now(),
   "updatedAt" timestamp with time zone null,
@@ -28,9 +28,9 @@ create table categories (
 create type article_status as enum('unread', 'read');
 
 create table articles (
-  id uuid not null,
-  "userId" uuid not null,
-  "categoryId" uuid null,
+  id bigserial not null,
+  "userId" int not null,
+  "categoryId" int null,
   title text not null,
   text text,
   html text,

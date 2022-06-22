@@ -8,4 +8,5 @@ type Config struct {
 type GeneralConfig struct {
 	DatabaseURI string `json:"databaseURI"`
 	ListenAddr  string `json:"listenAddr"`
+	BlockList   string `json:"blockList"`
 }

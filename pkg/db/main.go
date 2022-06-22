@@ -11,6 +11,7 @@ import (
 // DB is the global database structure
 type DB interface {
 	Close() error
+	ArticleRepository
 }
 
 // NewDB creates a new database provider regarding the datasource uri
