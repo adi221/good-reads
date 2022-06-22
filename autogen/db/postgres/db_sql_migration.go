@@ -9,7 +9,7 @@ var DatabaseSQLMigration = map[string]string{
 );
 
 create table users (
-  id uuid not null,
+  id bigserial not null,
   username varchar(40) not null unique,
   email varchar(255) not null,
   password varchar not null,
@@ -20,8 +20,8 @@ create table users (
 );
 
 create table categories (
-  id uuid not null,
-  "userId" uuid not null,
+  id bigserial not null,
+  "userId" int not null,
   title varchar(255) not null,
   "createdAt" timestamp with time zone not null default now(),
   "updatedAt" timestamp with time zone null,
@@ -34,9 +34,9 @@ create table categories (
 create type article_status as enum('unread', 'read');
 
 create table articles (
-  id uuid not null,
-  "userId" uuid not null,
-  "categoryId" uuid null,
+  id bigserial not null,
+  "userId" int not null,
+  "categoryId" int null,
   title text not null,
   text text,
   html text,
@@ -58,5 +58,5 @@ create table articles (
 
 // DatabaseSQLMigrationChecksums is generated from a fileset and contains files checksums
 var DatabaseSQLMigrationChecksums = map[string]string{
-	"db_migration_1": "4ec7f10ed3c11a3894b5afed073b1328f504b8db23a5006302be29286f7b3afe",
+	"db_migration_1": "4bf992eb9b5500a66bab7773b787cfbe4dc9b298b159e5b38d2099fabe979e7c",
 }

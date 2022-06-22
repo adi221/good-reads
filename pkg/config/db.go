@@ -2,14 +2,15 @@ package config
 
 import (
 	"fmt"
-	"os"
+
+	"github.com/adi221/good-reads/pkg/helper"
 )
 
 func GetDatabaseConnectionUri() string {
-	// TODO: prefer to use the whole connection string as a env var, but the special characters in the string should be escaped so skip it for now.
-	password := os.Getenv("POSTGRES_CONN_PASSWORD")
-	if password == "" {
-		panic("'POSTGRES_CONN_PASSWORD' environment variable must be set")
-	}
-	return fmt.Sprintf("postgres://postgres:%s@localhost:5433/good-reads?sslmode=disable", password)
+	user := helper.GetEnv("POSTGRES_CONN_USER", "postgres")
+	password := helper.GetEnv("POSTGRES_CONN_PASSWORD", "postgres")
+	host := helper.GetEnv("POSTGRESS_CONN_HOST", "localhost")
+	port := helper.GetEnv("POSTGRESS_CONN_PORT", "5432")
+	dbName := helper.GetEnv("POSTGRESS_CONN_NAME", "db")
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbName)
 }
