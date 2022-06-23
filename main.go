@@ -17,6 +17,7 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to init database")
 	}
+	defer database.Close()
 
 	err = service.Configure(*conf, database)
 	if err != nil {
