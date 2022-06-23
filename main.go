@@ -6,6 +6,7 @@ import (
 	"github.com/adi221/good-reads/pkg/api"
 	"github.com/adi221/good-reads/pkg/config"
 	"github.com/adi221/good-reads/pkg/db"
+	"github.com/adi221/good-reads/pkg/service"
 	"github.com/rs/zerolog/log"
 )
 
@@ -14,9 +15,14 @@ func main() {
 
 	database, err := db.NewDB(conf.General.DatabaseURI)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to initialize database")
+		log.Fatal().Err(err).Msg("Failed to init database")
 	}
-	_ = database
+
+	err = service.Configure(*conf, database)
+	if err != nil {
+		database.Close()
+		log.Fatal().Err(err).Msg("Failed to init service registry")
+	}
 
 	server := &http.Server{
 		Addr:    conf.General.ListenAddr,

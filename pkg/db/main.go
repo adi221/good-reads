@@ -26,8 +26,7 @@ func NewDB(conn string) (DB, error) {
 
 	switch provider {
 	case "postgres":
-		db, err := postgres.NewPostgreSQL(u)
-		_ = db
+		db, err = postgres.NewPostgreSQL(u)
 		if err != nil {
 			return nil, err
 		}

@@ -2,16 +2,17 @@ package postgres
 
 import (
 	"database/sql"
-	"github.com/adi221/good-reads/pkg/model"
 	"strings"
+
+	"github.com/adi221/good-reads/pkg/model"
 )
 
 const articlesTable = "articles"
 
 var articleColumns = []string{
 	"id",
-	"userId",
-	"categoryId",
+	"\"userId\"",
+	"\"categoryId\"",
 	"title",
 	"text",
 	"html",
@@ -19,8 +20,8 @@ var articleColumns = []string{
 	"image",
 	"hash",
 	"status",
-	"createdAt",
-	"updatedAt",
+	"\"createdAt\"",
+	"\"updatedAt\"",
 }
 
 func mapRowToArticle(row *sql.Row) (*model.Article, error) {
