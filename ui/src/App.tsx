@@ -1,13 +1,11 @@
-import { useQuery } from '@apollo/client'
-import { GetArticle } from './apollo/articles/queries'
-import styles from './App.module.scss'
+import GlobalStyle from './App.styles';
+import Routes from './routes/Routes';
 
-const App = () => {
-  const { data, error, loading } = useQuery(GetArticle, {
-    variables: { id: '00000000-0200-4c1b-4e12-1ba74bff4a4b' }
-  })
-
-  return <div className={styles.app}>{JSON.stringify(data, null, 2)}</div>
-}
+const App = () => (
+  <div>
+    <GlobalStyle />
+    <Routes />
+  </div>
+)
 
 export default App

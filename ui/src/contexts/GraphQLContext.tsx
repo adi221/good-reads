@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client'
+import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from } from '@apollo/client'
+import { onError } from '@apollo/client/link/error'
 import { API_BASE_URL } from '../constants'
 
 const httpLink = new HttpLink({
@@ -8,10 +9,18 @@ const httpLink = new HttpLink({
 
 const cache = new InMemoryCache()
 
+// Error interceptor
+const errorLink = () => {
+ return onError((err) => {
+   console.error(err)
+ })
+}
+
 const client = new ApolloClient({
-  link: httpLink,
+  link: from([errorLink(), httpLink]),
   cache
 })
+
 
 interface Props {
   children: React.ReactNode
