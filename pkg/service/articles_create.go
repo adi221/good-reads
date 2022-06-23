@@ -38,7 +38,7 @@ func (reg *Registry) CreateArticle(ctx context.Context, form model.ArticleCreate
 
 	reg.logger.Debug().Uint(
 		"uid", uid,
-	).Str("title", form.TruncatedTitle()).Msg("creating article...")
+	).Str("title", form.TruncatedTitle()).Msg("Creating article...")
 	article, err := reg.db.CreateArticleForUser(uid, form)
 	if err != nil {
 		reg.logger.Info().Err(err).Uint(

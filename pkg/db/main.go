@@ -12,6 +12,7 @@ import (
 type DB interface {
 	Close() error
 	ArticleRepository
+	UserRespository
 }
 
 // NewDB creates a new database provider regarding the datasource uri
