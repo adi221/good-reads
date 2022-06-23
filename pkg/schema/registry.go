@@ -29,11 +29,11 @@ func BuildRootSchema() (graphql.Schema, error) {
 				Fields: QueryFields,
 			},
 		),
-		// Mutation: graphql.NewObject(
-		// 	graphql.ObjectConfig{
-		// 		Name:   "Mutation",
-		// 		Fields: MutationFields,
-		// 	},
-		// ),
+		Mutation: graphql.NewObject(
+			graphql.ObjectConfig{
+				Name:   "Mutation",
+				Fields: MutationFields,
+			},
+		),
 	})
 }

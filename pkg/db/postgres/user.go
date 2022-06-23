@@ -15,7 +15,7 @@ var usersColumns = []string{
 	"id",
 	"username",
 	"email",
-	"createdAt",
+	"\"createdAt\"",
 }
 
 func mapRowToUser(row *sql.Row) (*model.User, error) {
@@ -58,7 +58,7 @@ func (pg *DB) CreateUser(user model.User) (*model.User, error) {
 		user.Email,
 		hashedPassword,
 	).Suffix(
-		"RETURNING " + strings.Join(articleColumns, ","),
+		"RETURNING " + strings.Join(usersColumns, ","),
 	).ToSql()
 	row := pg.db.QueryRow(query, args...)
 	return mapRowToUser(row)
