@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextField from '@mui/material/TextField';
-import { loginFormSchema } from './LoginForm.schema'
+import { signUpFormSchema } from './SignUpForm.schema'
 import {
   StyledForm,
   CallToAction,
@@ -11,10 +11,16 @@ import {
   FormContainer,
   StyledHeader,
   StyledButton
-} from './LoginForm.styles';
+} from './SignUpForm.styles';
 import { Subtitle1 } from '../../../styles/typography';
 import { SignUpUser } from '../../../apollo/users/mutations';
 import { RoutesDict } from '../../../@types/enums';
+
+interface SignUpFormFields {
+  username: string
+  email: string
+  password: string
+}
 
 export const formVariant = {
   exit: { y: '5rem', opacity: 0 },
@@ -24,23 +30,25 @@ export const transition = {
   duration: 0.2,
 };
 
-interface LoginFormFields {
-  usernameOrEmail: string
+interface SignUpFormFields {
+  username: string
+  email: string
   password: string
 }
 
-const LoginForm: FC = () => {
+
+const SignUpForm: FC = () => {
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<LoginFormFields>({
-    resolver: yupResolver(loginFormSchema),
+  } = useForm<SignUpFormFields>({
+    resolver: yupResolver(signUpFormSchema),
   })
 
   const [signUpUserMutation] = useMutation(SignUpUser)
 
-  const onSubmit = (data: LoginFormFields) => {
+  const onSubmit = (data: SignUpFormFields) => {
     signUpUserMutation({
       variables: data
     })
@@ -52,14 +60,21 @@ const LoginForm: FC = () => {
       exit="exit"
       transition={transition}
     >
-      <StyledHeader>Log in</StyledHeader>
+      <StyledHeader>Sign up</StyledHeader>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
         <TextField
-          label='Username or email'
+          label='Username'
           type='text'
-          {...register('usernameOrEmail')}
-          error={!!errors?.usernameOrEmail}
-          helperText={errors?.usernameOrEmail?.message}
+          {...register('username')}
+          error={!!errors?.username}
+          helperText={errors?.username?.message}
+        />
+        <TextField
+          label='Email'
+          type='text'
+          {...register('email')}
+          error={!!errors?.email}
+          helperText={errors?.email?.message}
         />
         <TextField
           label='Password'
@@ -73,15 +88,15 @@ const LoginForm: FC = () => {
           type="submit"
         >
           <Subtitle1>
-            Log in
+            Sign up
           </Subtitle1>
         </StyledButton>
         <CallToAction>
-          Don&apos;t have an account?{' '}
+          Already have an account?{' '}
           <HighlightedLink
-            to={RoutesDict.SIGN_UP}
+            to={RoutesDict.LOGIN}
           >
-            Sign up
+            Log in 
           </HighlightedLink>
         </CallToAction>
       </StyledForm>
@@ -89,4 +104,4 @@ const LoginForm: FC = () => {
   )
 }
 
-export default LoginForm
+export default SignUpForm
