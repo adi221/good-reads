@@ -6,4 +6,5 @@ import (
 
 type UserRespository interface {
 	CreateUser(user model.User) (*model.User, error)
+	GetUserByIdentity(identity string, password string) (*model.User, error)
 }

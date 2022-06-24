@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { useMutation } from '@apollo/client'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextField from '@mui/material/TextField';
 import { loginFormSchema } from './LoginForm.schema'
@@ -13,7 +14,7 @@ import {
   StyledButton
 } from './LoginForm.styles';
 import { Subtitle1 } from '../../../styles/typography';
-import { SignUpUser } from '../../../apollo/users/mutations';
+import { LoginUser } from '../../../apollo/users/mutations';
 import { RoutesDict } from '../../../@types/enums';
 
 export const formVariant = {
@@ -30,6 +31,8 @@ interface LoginFormFields {
 }
 
 const LoginForm: FC = () => {
+  const navigate = useNavigate()
+
   const {
     handleSubmit,
     register,
@@ -38,10 +41,16 @@ const LoginForm: FC = () => {
     resolver: yupResolver(loginFormSchema),
   })
 
-  const [signUpUserMutation] = useMutation(SignUpUser)
+  const onLoginCompleted = () => {
+    navigate(RoutesDict.HOME)
+  }
+
+  const [loginUserMutation] = useMutation(LoginUser, {
+    onCompleted: onLoginCompleted
+  })
 
   const onSubmit = (data: LoginFormFields) => {
-    signUpUserMutation({
+    loginUserMutation({
       variables: data
     })
   }
