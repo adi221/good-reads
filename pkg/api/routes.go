@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/adi221/good-reads/pkg/enums"
+	"github.com/adi221/good-reads/pkg/enum"
 	"github.com/adi221/good-reads/pkg/middleware"
 )
 
@@ -30,12 +30,12 @@ func routes() Routes {
 		newRoute(
 			"/",
 			index(),
-			middleware.Methods(enums.HttpMethods.GET),
+			middleware.Methods(enum.HttpMethods.GET),
 		),
 		newRoute(
 			"/graphql",
 			graphqlHandler(),
-			middleware.Methods(enums.HttpMethods.GET, enums.HttpMethods.POST),
+			middleware.Methods(enum.HttpMethods.GET, enum.HttpMethods.POST),
 		),
 	}
 }

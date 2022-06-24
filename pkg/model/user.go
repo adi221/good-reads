@@ -10,3 +10,8 @@ type User struct {
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
+
+// Codes for user HttpErrors
+const (
+	ErrIncorrectCreds = "ERR_INCORRECT_CREDS"
+)

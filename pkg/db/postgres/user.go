@@ -3,10 +3,12 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/adi221/good-reads/pkg/helper"
 	"github.com/adi221/good-reads/pkg/model"
 )
 
@@ -100,38 +102,46 @@ func (pg *DB) CreateUser(user model.User) (*model.User, error) {
 	return mapRowToUser(row)
 }
 
-func (pg *DB) GetUserByIdentity(identity string, password string) (*model.User, error) {
-	columns := usersColumns
-	if password != "" {
-		columns = userColumnsWithEncryptedPassword
-	}
-
+func (pg *DB) GetUserByIdentityAndVerify(identity string, password string) (*model.User, error) {
 	row := pg.db.QueryRow(
 		fmt.Sprintf(
 			"SELECT %s FROM %s WHERE username = $1 OR email = $1",
-			strings.Join(columns, ","),
+			strings.Join(userColumnsWithEncryptedPassword, ","),
 			usersTable,
 		),
 		identity,
 	)
 
-	if password != "" {
-		result, err := mapRowToUserWithPassword(row)
+	result, err := mapRowToUserWithPassword(row)
 
-		if err == sql.ErrNoRows {
-			return nil, nil
-		} else if err != nil {
-			return nil, err
-		}
-
-		if verified := verifyPassword(result.Password, password); !verified {
-			return nil, nil
-		} else {
-			result.Password = ""
-		}
-
-		return result, nil
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
 	}
+
+	if verified := verifyPassword(result.Password, password); !verified {
+		return nil, helper.NewHttpError(
+			model.ErrIncorrectCreds,
+			http.StatusUnauthorized,
+			"Password is incorrect",
+		)
+	} else {
+		result.Password = ""
+	}
+
+	return result, nil
+}
+
+func (pg *DB) GetUserByIdentity(identity string) (*model.User, error) {
+	row := pg.db.QueryRow(
+		fmt.Sprintf(
+			"SELECT %s FROM %s WHERE username = $1 OR email = $1",
+			strings.Join(usersColumns, ","),
+			usersTable,
+		),
+		identity,
+	)
 
 	result, err := mapRowToUser(row)
 
