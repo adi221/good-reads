@@ -13,5 +13,8 @@ type User struct {
 
 // Codes for user HttpErrors
 const (
-	ErrIncorrectCreds = "ERR_INCORRECT_CREDS"
+	IncorrectCreds        = "ERR_INCORRECT_CREDS"
+	UsernameAlreadyExists = "ERR_USERNAME_ALREADY_EXISTS"
+	EmailAlreadyExists    = "ERR_EMAIL_ALREADY_EXISTS"
+	UserNonExist          = "ERR_USER_NON_EXIST"
 )

@@ -1,6 +1,7 @@
 import { FC } from 'react'
-import { useMutation } from '@apollo/client'
+import { ApolloError, useMutation } from '@apollo/client'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextField from '@mui/material/TextField';
 import { signUpFormSchema } from './SignUpForm.schema'
@@ -14,7 +15,10 @@ import {
 } from './SignUpForm.styles';
 import { Subtitle1 } from '../../../styles/typography';
 import { SignUpUser } from '../../../apollo/users/mutations';
-import { RoutesDict } from '../../../@types/enums';
+import { RoutesDict } from '../../../utils/enums';
+import { getGraphQLErrors } from '../../../utils/graphql';
+import { UserErrCodes } from '../../../services/server/users'
+import { useMessage } from '../../../contexts/MessageContext'
 
 interface SignUpFormFields {
   username: string
@@ -38,6 +42,9 @@ interface SignUpFormFields {
 
 
 const SignUpForm: FC = () => {
+  const navigate = useNavigate()
+  const { showMessage } = useMessage()
+
   const {
     handleSubmit,
     register,
@@ -46,7 +53,25 @@ const SignUpForm: FC = () => {
     resolver: yupResolver(signUpFormSchema),
   })
 
-  const [signUpUserMutation] = useMutation(SignUpUser)
+  const onSignUpCompleted = () => {
+    navigate(RoutesDict.HOME)
+  }
+
+  const onSignUpError = (error: ApolloError) => {
+    const errCodes = getGraphQLErrors(error).map(err => err.code)
+    if (errCodes.includes(UserErrCodes.ERR_USERNAME_ALREADY_EXISTS)) {
+      showMessage({ text: 'Please select a different username' })
+    } else if (errCodes.includes(UserErrCodes.ERR_EMAIL_ALREADY_EXISTS)) {
+      showMessage({ text: 'Please select a different email'})
+    } else {
+      showMessage({ text: 'Failed to sign you up! Please try again'})
+    }
+  }
+
+  const [signUpUserMutation] = useMutation(SignUpUser, { 
+    onCompleted: onSignUpCompleted,
+    onError: onSignUpError,
+  })
 
   const onSubmit = (data: SignUpFormFields) => {
     signUpUserMutation({
