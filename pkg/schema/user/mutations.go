@@ -7,6 +7,26 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+var loginUserMutationField = &graphql.Field{
+	Type:        userType,
+	Description: "Log in a user",
+	Args: graphql.FieldConfigArgument{
+		"usernameOrEmail": &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(graphql.String),
+		},
+		"password": &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(graphql.String),
+		},
+	},
+	Resolve: loginResolver,
+}
+
+func loginResolver(p graphql.ResolveParams) (interface{}, error) {
+	usernameOrEmail := p.Args["usernameOrEmail"].(string)
+	password := p.Args["password"].(string)
+	return service.Lookup().LoginUser(usernameOrEmail, password)
+}
+
 var signUpUserMutationField = &graphql.Field{
 	Type:        userType,
 	Description: "Sign up a user",
@@ -36,4 +56,5 @@ func signUpResolver(p graphql.ResolveParams) (interface{}, error) {
 
 func init() {
 	schema.AddMutationField("signUpUser", signUpUserMutationField)
+	schema.AddMutationField("loginUser", loginUserMutationField)
 }

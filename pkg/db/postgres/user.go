@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"fmt"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -16,6 +17,16 @@ var usersColumns = []string{
 	"username",
 	"email",
 	"\"createdAt\"",
+	"\"updatedAt\"",
+}
+
+var userColumnsWithEncryptedPassword = []string{
+	"id",
+	"username",
+	"email",
+	"password",
+	"\"createdAt\"",
+	"\"updatedAt\"",
 }
 
 func mapRowToUser(row *sql.Row) (*model.User, error) {
@@ -26,6 +37,24 @@ func mapRowToUser(row *sql.Row) (*model.User, error) {
 		&user.Username,
 		&user.Email,
 		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func mapRowToUserWithPassword(row *sql.Row) (*model.User, error) {
+	user := &model.User{}
+
+	err := row.Scan(
+		&user.ID,
+		&user.Username,
+		&user.Email,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
 	)
 	if err != nil {
 		return nil, err
@@ -39,6 +68,13 @@ func validateAndEncryptPassword(password string) (string, error) {
 		return password, err
 	}
 	return string(hashedPassword), nil
+}
+
+func verifyPassword(encryptedPassword string, password string) bool {
+	if err := bcrypt.CompareHashAndPassword([]byte(encryptedPassword), []byte(password)); err != nil {
+		return false
+	}
+	return true
 }
 
 func (pg *DB) CreateUser(user model.User) (*model.User, error) {
@@ -62,4 +98,48 @@ func (pg *DB) CreateUser(user model.User) (*model.User, error) {
 	).ToSql()
 	row := pg.db.QueryRow(query, args...)
 	return mapRowToUser(row)
+}
+
+func (pg *DB) GetUserByIdentity(identity string, password string) (*model.User, error) {
+	columns := usersColumns
+	if password != "" {
+		columns = userColumnsWithEncryptedPassword
+	}
+
+	row := pg.db.QueryRow(
+		fmt.Sprintf(
+			"SELECT %s FROM %s WHERE username = $1 OR email = $1",
+			strings.Join(columns, ","),
+			usersTable,
+		),
+		identity,
+	)
+
+	if password != "" {
+		result, err := mapRowToUserWithPassword(row)
+
+		if err == sql.ErrNoRows {
+			return nil, nil
+		} else if err != nil {
+			return nil, err
+		}
+
+		if verified := verifyPassword(result.Password, password); !verified {
+			return nil, nil
+		} else {
+			result.Password = ""
+		}
+
+		return result, nil
+	}
+
+	result, err := mapRowToUser(row)
+
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

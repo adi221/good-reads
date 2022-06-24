@@ -12,3 +12,12 @@ func (reg *Registry) SignUpUser(user model.User) (*model.User, error) {
 	}
 	return newUser, nil
 }
+
+func (reg *Registry) LoginUser(identity string, password string) (*model.User, error) {
+	reg.logger.Debug().Msg("Trying to log in a user")
+	user, err := reg.db.GetUserByIdentity(identity, password)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
