@@ -1,4 +1,8 @@
-import { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
+
+export const AppContainer = styled.div`
+  min-height: 100vh;
+`
 
 const GlobalStyle = createGlobalStyle`
   *,

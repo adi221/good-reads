@@ -1,13 +1,13 @@
-import GlobalStyle from './App.styles';
+import GlobalStyle, { AppContainer } from './App.styles';
 import AlertCenter from './components/AlertCenter/AlertCenter';
 import Routes from './routes/Routes';
 
 const App = () => (
-  <div>
+  <AppContainer>
     <GlobalStyle />
     <Routes />
     <AlertCenter/>
-  </div>
+  </AppContainer>
 )
 
 export default App
