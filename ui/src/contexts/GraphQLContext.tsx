@@ -9,7 +9,6 @@ const httpLink = new HttpLink({
 
 const cache = new InMemoryCache()
 
-// Error interceptor
 const errorLink = () => {
  return onError((err) => {
    console.error(err)

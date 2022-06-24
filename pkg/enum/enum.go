@@ -1,4 +1,4 @@
-package enums
+package enum
 
 var HttpMethods = struct {
 	GET     string

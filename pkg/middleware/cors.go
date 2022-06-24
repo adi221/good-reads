@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/adi221/good-reads/pkg/enums"
+	"github.com/adi221/good-reads/pkg/enum"
 )
 
 // Cors is a middleware to enabling CORS on HTTP requests
@@ -22,7 +22,7 @@ func Cors(allowOrigin string) Middleware {
 			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization")
 			w.Header().Set("Access-Control-Expose-Headers", "*")
 
-			if r.Method != enums.HttpMethods.OPTIONS {
+			if r.Method != enum.HttpMethods.OPTIONS {
 				next.ServeHTTP(w, r)
 			}
 		})

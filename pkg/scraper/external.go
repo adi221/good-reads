@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adi221/good-reads/pkg/enums"
+	"github.com/adi221/good-reads/pkg/enum"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -44,7 +44,7 @@ func (ws extrenalWebScraper) Scrap(ctx context.Context, rawurl string) (*WebPage
 func (ws extrenalWebScraper) scrap(ctx context.Context, rawurl string) (*WebPage, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, enums.HttpMethods.GET, ws.uri, nil)
+	req, err := http.NewRequestWithContext(ctx, enum.HttpMethods.GET, ws.uri, nil)
 	if err != nil {
 		return nil, err
 	}
