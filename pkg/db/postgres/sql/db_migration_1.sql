@@ -5,7 +5,7 @@ create table schema_version (
 create table users (
   id bigserial not null,
   username varchar(40) not null unique,
-  email varchar(255) not null,
+  email varchar(255) not null unique,
   password varchar not null,
   "createdAt" timestamp with time zone not null default now(),
   "updatedAt" timestamp with time zone null,

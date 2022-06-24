@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import {  Routes as Switch, Route } from 'react-router-dom';
-import { RoutesDict } from '../@types/enums';
+import { RoutesDict } from '../utils/enums';
 import HomePage from './HomePage/HomePage';
 import LoginPage from './LoginPage/LoginPage';
 import SignUpPage from './SignUpPage/SignUpPage';

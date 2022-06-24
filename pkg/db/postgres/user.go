@@ -79,7 +79,46 @@ func verifyPassword(encryptedPassword string, password string) bool {
 	return true
 }
 
+func (pg *DB) validateUserNotExistByUsername(username string) error {
+	curUserByUsername, err := pg.GetUserByIdentity(username)
+	if err != nil {
+		return helper.ServerError()
+	}
+	if curUserByUsername != nil {
+		return helper.NewHttpError(
+			model.UsernameAlreadyExists,
+			http.StatusConflict,
+			"Username already exists",
+		)
+	}
+	return nil
+}
+
+func (pg *DB) validateUserNotExistByEmail(email string) error {
+	curUserByEmail, err := pg.GetUserByIdentity(email)
+	if err != nil {
+		return helper.ServerError()
+	}
+	if curUserByEmail != nil {
+		return helper.NewHttpError(
+			model.EmailAlreadyExists,
+			http.StatusConflict,
+			"Email already exists",
+		)
+	}
+	return nil
+}
+
 func (pg *DB) CreateUser(user model.User) (*model.User, error) {
+	err := pg.validateUserNotExistByUsername(user.Username)
+	if err != nil {
+		return nil, err
+	}
+	err = pg.validateUserNotExistByEmail(user.Email)
+	if err != nil {
+		return nil, err
+	}
+
 	hashedPassword, err := validateAndEncryptPassword(user.Password)
 	if err != nil {
 		return nil, err
@@ -122,7 +161,7 @@ func (pg *DB) GetUserByIdentityAndVerify(identity string, password string) (*mod
 
 	if verified := verifyPassword(result.Password, password); !verified {
 		return nil, helper.NewHttpError(
-			model.ErrIncorrectCreds,
+			model.IncorrectCreds,
 			http.StatusUnauthorized,
 			"Password is incorrect",
 		)

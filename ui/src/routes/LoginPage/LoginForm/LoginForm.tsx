@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { useMutation } from '@apollo/client'
+import { ApolloError, useMutation } from '@apollo/client'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -15,7 +15,10 @@ import {
 } from './LoginForm.styles';
 import { Subtitle1 } from '../../../styles/typography';
 import { LoginUser } from '../../../apollo/users/mutations';
-import { RoutesDict } from '../../../@types/enums';
+import { RoutesDict } from '../../../utils/enums';
+import { getGraphQLErrors } from '../../../utils/graphql';
+import { UserErrCodes } from '../../../services/server/users';
+import { useMessage } from '../../../contexts/MessageContext'
 
 export const formVariant = {
   exit: { y: '5rem', opacity: 0 },
@@ -32,6 +35,7 @@ interface LoginFormFields {
 
 const LoginForm: FC = () => {
   const navigate = useNavigate()
+  const { showMessage } = useMessage()
 
   const {
     handleSubmit,
@@ -45,8 +49,18 @@ const LoginForm: FC = () => {
     navigate(RoutesDict.HOME)
   }
 
+  const onLoginError = (error: ApolloError) => {
+    const errCodes = getGraphQLErrors(error).map(err => err.code)
+    if (errCodes.includes(UserErrCodes.ERR_USER_NON_EXIST) || errCodes.includes(UserErrCodes.ERR_INCORRECT_CREDS)) {
+      showMessage({ text: 'Username/email or password are incorrect' })
+    } else {
+      showMessage({ text: 'Failed to log in you up! Please try again'})
+    }
+  }
+
   const [loginUserMutation] = useMutation(LoginUser, {
-    onCompleted: onLoginCompleted
+    onCompleted: onLoginCompleted,
+    onError: onLoginError
   })
 
   const onSubmit = (data: LoginFormFields) => {

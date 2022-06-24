@@ -1,6 +1,9 @@
 package service
 
 import (
+	"net/http"
+
+	"github.com/adi221/good-reads/pkg/helper"
 	"github.com/adi221/good-reads/pkg/model"
 )
 
@@ -18,6 +21,13 @@ func (reg *Registry) LoginUser(identity string, password string) (*model.User, e
 	user, err := reg.db.GetUserByIdentityAndVerify(identity, password)
 	if err != nil {
 		return nil, err
+	}
+	if user == nil {
+		return nil, helper.NewHttpError(
+			model.UserNonExist,
+			http.StatusNotFound,
+			"User does not exist",
+		)
 	}
 	return user, nil
 }
