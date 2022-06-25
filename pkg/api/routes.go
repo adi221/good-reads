@@ -35,6 +35,8 @@ func routes() Routes {
 		newRoute(
 			"/graphql",
 			graphqlHandler(),
+			middleware.RequestContext,
+			middleware.Authenticate,
 			middleware.Methods(enum.HttpMethods.GET, enum.HttpMethods.POST),
 		),
 	}

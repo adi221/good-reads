@@ -8,5 +8,6 @@ func NewConfig() *Config {
 			ListenAddr:  ":8080",
 			BlockList:   "https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt",
 		},
+		JWT: GetJWTConfig(),
 	}
 }

@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/adi221/good-reads/pkg/helper"
 	"github.com/adi221/good-reads/pkg/model"
 )
@@ -64,21 +62,6 @@ func mapRowToUserWithPassword(row *sql.Row) (*model.User, error) {
 	return user, nil
 }
 
-func validateAndEncryptPassword(password string) (string, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-	if err != nil {
-		return password, err
-	}
-	return string(hashedPassword), nil
-}
-
-func verifyPassword(encryptedPassword string, password string) bool {
-	if err := bcrypt.CompareHashAndPassword([]byte(encryptedPassword), []byte(password)); err != nil {
-		return false
-	}
-	return true
-}
-
 func (pg *DB) validateUserNotExistByUsername(username string) error {
 	curUserByUsername, err := pg.GetUserByIdentity(username)
 	if err != nil {
@@ -110,16 +93,14 @@ func (pg *DB) validateUserNotExistByEmail(email string) error {
 }
 
 func (pg *DB) CreateUser(user model.User) (*model.User, error) {
-	err := pg.validateUserNotExistByUsername(user.Username)
-	if err != nil {
+	if err := pg.validateUserNotExistByUsername(user.Username); err != nil {
 		return nil, err
 	}
-	err = pg.validateUserNotExistByEmail(user.Email)
-	if err != nil {
+	if err := pg.validateUserNotExistByEmail(user.Email); err != nil {
 		return nil, err
 	}
 
-	hashedPassword, err := validateAndEncryptPassword(user.Password)
+	hashedPassword, err := helper.ValidateAndEncryptPassword(user.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +140,7 @@ func (pg *DB) GetUserByIdentityAndVerify(identity string, password string) (*mod
 		return nil, err
 	}
 
-	if verified := verifyPassword(result.Password, password); !verified {
+	if verified := helper.VerifyPassword(result.Password, password); !verified {
 		return nil, helper.NewHttpError(
 			model.IncorrectCreds,
 			http.StatusUnauthorized,

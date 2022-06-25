@@ -24,7 +24,7 @@ var loginUserMutationField = &graphql.Field{
 func loginResolver(p graphql.ResolveParams) (interface{}, error) {
 	usernameOrEmail := p.Args["usernameOrEmail"].(string)
 	password := p.Args["password"].(string)
-	return service.Lookup().LoginUser(usernameOrEmail, password)
+	return service.Lookup().LoginUser(p.Context, usernameOrEmail, password)
 }
 
 var signUpUserMutationField = &graphql.Field{
@@ -51,7 +51,7 @@ func signUpResolver(p graphql.ResolveParams) (interface{}, error) {
 		Password: p.Args["password"].(string),
 	}
 
-	return service.Lookup().SignUpUser(user)
+	return service.Lookup().SignUpUser(p.Context, user)
 }
 
 func init() {

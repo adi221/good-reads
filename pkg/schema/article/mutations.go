@@ -1,10 +1,10 @@
 package article
 
 import (
-	"github.com/adi221/good-reads/pkg/helper"
 	"github.com/adi221/good-reads/pkg/model"
 	"github.com/adi221/good-reads/pkg/schema"
 	"github.com/adi221/good-reads/pkg/service"
+	"github.com/adi221/good-reads/pkg/util"
 	"github.com/graphql-go/graphql"
 )
 
@@ -24,7 +24,7 @@ var addArticleMutationField = &graphql.Field{
 
 func addArticleResolver(p graphql.ResolveParams) (interface{}, error) {
 	var categoryId *uint
-	if val, ok := helper.ConvGQLStringToUint(p.Args["categoryId"]); ok {
+	if val, ok := util.ConvGQLStringToUint(p.Args["categoryId"]); ok {
 		categoryId = &val
 	}
 	url, _ := p.Args["url"].(string)
