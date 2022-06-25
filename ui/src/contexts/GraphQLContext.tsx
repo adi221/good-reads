@@ -1,22 +1,45 @@
 import React, { FC } from 'react'
-import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from } from '@apollo/client'
+import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from, ApolloLink } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
+import { setContext } from '@apollo/client/link/context';
 import { API_BASE_URL } from '../constants'
+import { getAccessToken, setAccessToken } from '../utils/localStorage';
 
 const httpLink = new HttpLink({
-  uri: API_BASE_URL + '/graphql'
+  uri: API_BASE_URL + '/graphql',
+})
+
+const afterwareLink = new ApolloLink((operation, forward) => {
+  return forward(operation).map((response) => {
+    const context = operation.getContext()
+    const { response: { headers } } = context;
+    const token = headers.get('authorization')
+    if (token) {
+      setAccessToken(token)
+    }
+    return response
+  })
+})
+
+const authLink = setContext((_, { headers }) => {
+  const token = getAccessToken()
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    }
+  }
 })
 
 const cache = new InMemoryCache()
 
-const errorLink = () => {
- return onError((err) => {
+const errorLink = onError((err) => {
    console.error(err)
- })
-}
+})
+
 
 const client = new ApolloClient({
-  link: from([errorLink(), httpLink]),
+  link: from([errorLink, authLink, afterwareLink, httpLink]),
   cache
 })
 

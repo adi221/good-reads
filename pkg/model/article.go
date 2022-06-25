@@ -1,8 +1,9 @@
 package model
 
 import (
-	"github.com/adi221/good-reads/pkg/helper"
 	"time"
+
+	"github.com/adi221/good-reads/pkg/util"
 )
 
 // ArticleCreateForm structure definition
@@ -17,12 +18,12 @@ type ArticleCreateForm struct {
 
 // TruncatedTitle return truncated title
 func (form ArticleCreateForm) TruncatedTitle() string {
-	return helper.Truncate(form.Title, 29)
+	return util.Truncate(form.Title, 29)
 }
 
 // IsComplete tests if the form is complete
 func (form ArticleCreateForm) IsComplete() bool {
-	return !helper.OneIsEmpty(form.Image, form.Text, form.HTML)
+	return !util.OneIsEmpty(form.Image, form.Text, form.HTML)
 }
 
 // Hash returns form hash
@@ -34,7 +35,7 @@ func (form ArticleCreateForm) Hash() string {
 	if form.HTML != nil {
 		key += *form.HTML
 	}
-	return helper.Hash(key)
+	return util.Hash(key)
 }
 
 // Article structure definition
