@@ -7,6 +7,8 @@ import (
 
 	"github.com/adi221/good-reads/pkg/constant"
 	"github.com/adi221/good-reads/pkg/helper"
+	"github.com/adi221/good-reads/pkg/service"
+	"github.com/adi221/good-reads/pkg/util"
 )
 
 // Authenticate authenticates the JWT token from req.cookie
@@ -16,17 +18,35 @@ func Authenticate(next http.Handler) http.Handler {
 
 		authHeader := r.Header.Get("authorization")
 		if !strings.HasPrefix(authHeader, "Bearer ") {
-			// Supposed to return 401 but for now will leave it because there are routes that doesn't require authorization (login, signup)
-			next.ServeHTTP(w, r)
+			// Graphql route contain routes that don't require authorization first (login, signup). So decision will be made inside the route.
+			if r.URL.Path == "/graphql" {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			util.JsonErrors(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
+
 		claims, err := helper.ExtractClaimsFromToken(authHeader[7:])
 		if err != nil {
-			jsonErrors(w, "Unauthorized", http.StatusUnauthorized)
+			util.JsonErrors(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-		// TODO: find user by claims["id"] and then save it in context + id
-		ctx = context.WithValue(ctx, constant.ContextUserID, claims["id"])
+
+		uid := uint(claims["id"].(float64))
+		user, err := service.Lookup().GetUserById(ctx, uid)
+		if err != nil {
+			util.JsonErrors(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if user == nil {
+			util.JsonErrors(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		ctx = context.WithValue(ctx, constant.ContextUser, *user)
+		ctx = context.WithValue(ctx, constant.ContextUserID, uid)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

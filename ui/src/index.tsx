@@ -5,16 +5,19 @@ import App from './App'
 import GraphQLProvider from './contexts/GraphQLContext'
 import theme from './styles/theme';
 import MessageProvider from './contexts/MessageContext';
+import AuthProvider from './contexts/AuthContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <GraphQLProvider>
     <ThemeProvider theme={theme}>
-    <MessageProvider>
-    <Router>
-      <App />
-    </Router>
-    </MessageProvider>
+      <AuthProvider>
+        <MessageProvider>
+          <Router>
+            <App />
+          </Router>
+        </MessageProvider>
+      </AuthProvider>
     </ThemeProvider>
   </GraphQLProvider>
 )

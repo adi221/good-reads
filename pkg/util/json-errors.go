@@ -1,4 +1,4 @@
-package middleware
+package util
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ type errorsObject struct {
 	Errors []errorObject `json:"errors"`
 }
 
-func jsonErrors(w http.ResponseWriter, message string, code int) {
+func JsonErrors(w http.ResponseWriter, message string, code int) {
 	err := errorsObject{
 		Errors: []errorObject{{Message: message}},
 	}

@@ -14,7 +14,8 @@ const theme =  {
   },
   borderRadius: {
     sm: '4px',
-    md: '8px'
+    md: '8px',
+    circle: '50px'
   },
   opacity: {
     high: '1',

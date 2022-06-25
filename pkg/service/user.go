@@ -60,3 +60,11 @@ func (reg *Registry) LoginUser(ctx context.Context, identity string, password st
 	addTokenToResponseHeader(ctx, tokenString)
 	return user, nil
 }
+
+func (reg *Registry) GetUserById(ctx context.Context, id uint) (*model.User, error) {
+	user, err := reg.db.GetUserById(id)
+	if err != nil {
+		return nil, err
+	}
+	return user, err
+}

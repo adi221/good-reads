@@ -173,3 +173,24 @@ func (pg *DB) GetUserByIdentity(identity string) (*model.User, error) {
 
 	return result, nil
 }
+
+func (pg *DB) GetUserById(id uint) (*model.User, error) {
+	row := pg.db.QueryRow(
+		fmt.Sprintf(
+			"SELECT %s FROM %s WHERE id = $1",
+			strings.Join(usersColumns, ","),
+			usersTable,
+		),
+		id,
+	)
+
+	result, err := mapRowToUser(row)
+
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
