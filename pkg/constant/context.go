@@ -11,4 +11,6 @@ const (
 	ContextAuthorizationTokenSetter
 	// ContextUserID is the key used to store current user ID into the request context
 	ContextUserID
+	// ContextUser is the key used to store current user into the request context
+	ContextUser
 )

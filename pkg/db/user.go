@@ -8,4 +8,5 @@ type UserRespository interface {
 	CreateUser(user model.User) (*model.User, error)
 	GetUserByIdentity(identity string) (*model.User, error)
 	GetUserByIdentityAndVerify(identity string, password string) (*model.User, error)
+	GetUserById(id uint) (*model.User, error)
 }
