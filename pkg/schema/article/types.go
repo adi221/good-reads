@@ -26,7 +26,7 @@ var articleType = graphql.NewObject(
 		Name: "Article",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
-				Type: graphql.ID,
+				Type: graphql.Int,
 			},
 			"title": &graphql.Field{
 				Type: graphql.String,

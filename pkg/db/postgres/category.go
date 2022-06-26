@@ -2,8 +2,9 @@ package postgres
 
 import (
 	"database/sql"
-	"fmt"
 	"strings"
+
+	sq "github.com/Masterminds/squirrel"
 
 	"github.com/adi221/good-reads/pkg/model"
 )
@@ -49,7 +50,16 @@ func (pg *DB) CreateCategoryForUser(uid uint, category model.Category) (*model.C
 	).Suffix(
 		"RETURNING " + strings.Join(categoriesColumns, ","),
 	).ToSql()
-	fmt.Println(query)
+	row := pg.db.QueryRow(query, args...)
+	return mapRowToCategory(row)
+}
+
+func (pg *DB) GetCategoryByID(id uint) (*model.Category, error) {
+	query, args, _ := pg.psql.Select(categoriesColumns...).From(
+		categoriesTable,
+	).Where(
+		sq.Eq{"id": id},
+	).ToSql()
 	row := pg.db.QueryRow(query, args...)
 	return mapRowToCategory(row)
 }

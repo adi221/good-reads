@@ -9,10 +9,10 @@ var categoryType = graphql.NewObject(
 		Name: "Category",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
-				Type: graphql.ID,
+				Type: graphql.Int,
 			},
 			"userId": &graphql.Field{
-				Type: graphql.ID,
+				Type: graphql.Int,
 			},
 			"title": &graphql.Field{
 				Type: graphql.String,
