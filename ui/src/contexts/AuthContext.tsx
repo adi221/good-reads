@@ -1,6 +1,6 @@
 import { createContext, FC, useContext } from 'react'
 import { useQuery } from '@apollo/client'
-import { User } from '../@types/user'
+import { User } from '../@types/users'
 import { Me } from '../apollo/users/queries'
 import { matchResponse } from '../utils/graphql'
 import LoadingPage from '../components/LoadingPage/LoadingPage'
