@@ -9,7 +9,7 @@ var userType = graphql.NewObject(
 		Name: "User",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
-				Type: graphql.ID,
+				Type: graphql.Int,
 			},
 			"username": &graphql.Field{
 				Type: graphql.String,

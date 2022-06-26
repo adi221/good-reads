@@ -6,4 +6,5 @@ import (
 
 type CategoryRespository interface {
 	CreateCategoryForUser(uid uint, category model.Category) (*model.Category, error)
+	GetCategoryByID(uid uint) (*model.Category, error)
 }

@@ -10,3 +10,8 @@ type Category struct {
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
+
+// Codes for category HttpErrors
+const (
+	CategoryNonExist = "ERR_CATEGORY_NON_EXIST"
+)
