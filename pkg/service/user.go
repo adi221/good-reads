@@ -10,6 +10,10 @@ import (
 	"github.com/adi221/good-reads/pkg/model"
 )
 
+func getCurrentUserIDFromContext(ctx context.Context) uint {
+	return ctx.Value(constant.ContextUserID).(uint)
+}
+
 func addCookieToRequest(ctx context.Context, tokenString string) error {
 	type funcHandlerType func(str string)
 	setCookieHandler := ctx.Value(constant.ContextCookieSetter)
@@ -66,5 +70,5 @@ func (reg *Registry) GetUserById(ctx context.Context, id uint) (*model.User, err
 	if err != nil {
 		return nil, err
 	}
-	return user, err
+	return user, nil
 }

@@ -13,6 +13,7 @@ type DB interface {
 	Close() error
 	ArticleRepository
 	UserRespository
+	CategoryRespository
 }
 
 // NewDB creates a new database provider regarding the datasource uri
