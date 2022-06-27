@@ -3,11 +3,29 @@ package category
 import (
 	"errors"
 
+	"github.com/adi221/good-reads/pkg/model"
 	"github.com/adi221/good-reads/pkg/schema"
+	"github.com/adi221/good-reads/pkg/schema/common"
 	"github.com/adi221/good-reads/pkg/service"
 	"github.com/adi221/good-reads/pkg/util"
 	"github.com/graphql-go/graphql"
 )
+
+var categoriesQueryField = &graphql.Field{
+	Type: categoriesResponseType,
+	Args: graphql.FieldConfigArgument{
+		"filter": &graphql.ArgumentConfig{
+			Type: common.FilterSchemaInput,
+		},
+	},
+	Resolve: categoriesResolver,
+}
+
+func categoriesResolver(p graphql.ResolveParams) (interface{}, error) {
+	filter := p.Args["filter"].(map[string]interface{})
+	filterSchema := model.NewFilterSchema(filter)
+	return service.Lookup().GetCategories(p.Context, filterSchema)
+}
 
 var categoryQueryField = &graphql.Field{
 	Type: categoryType,
@@ -29,4 +47,5 @@ func categoryResolver(p graphql.ResolveParams) (interface{}, error) {
 
 func init() {
 	schema.AddQueryField("category", categoryQueryField)
+	schema.AddQueryField("categories", categoriesQueryField)
 }
