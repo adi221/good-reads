@@ -11,6 +11,11 @@ type Category struct {
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
 
+type GetCategoriesResponse struct {
+	Total uint        `json:"total,omitempty"`
+	Items []*Category `json:"items,omitempty"`
+}
+
 // Codes for category HttpErrors
 const (
 	CategoryNonExist = "ERR_CATEGORY_NON_EXIST"

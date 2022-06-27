@@ -29,3 +29,12 @@ func (reg *Registry) GetCategory(ctx context.Context, id uint) (*model.Category,
 	}
 	return category, nil
 }
+
+func (reg *Registry) GetCategories(ctx context.Context, filter model.FilterSchema) (*model.GetCategoriesResponse, error) {
+	uid := getCurrentUserIDFromContext(ctx)
+	result, err := reg.db.GetCategoriesByUser(uid, filter)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}

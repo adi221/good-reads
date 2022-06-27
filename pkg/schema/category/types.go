@@ -4,6 +4,20 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+var categoriesResponseType = graphql.NewObject(
+	graphql.ObjectConfig{
+		Name: "CategoriesResponse",
+		Fields: graphql.Fields{
+			"items": &graphql.Field{
+				Type: graphql.NewList(categoryType),
+			},
+			"total": &graphql.Field{
+				Type: graphql.Int,
+			},
+		},
+	},
+)
+
 var categoryType = graphql.NewObject(
 	graphql.ObjectConfig{
 		Name: "Category",
