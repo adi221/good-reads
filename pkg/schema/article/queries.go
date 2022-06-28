@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"github.com/adi221/good-reads/pkg/schema"
+	"github.com/adi221/good-reads/pkg/service"
+	"github.com/adi221/good-reads/pkg/util"
 	"github.com/graphql-go/graphql"
 )
 
@@ -11,25 +13,18 @@ var articleQueryField = &graphql.Field{
 	Type: articleType,
 	Args: graphql.FieldConfigArgument{
 		"id": &graphql.ArgumentConfig{
-			Type: graphql.NewNonNull(graphql.ID),
+			Type: graphql.NewNonNull(graphql.Int),
 		},
 	},
 	Resolve: articleResolver,
 }
 
-type TempArticle struct {
-	Id    string `json:"id"`
-	Title string `json:"title"`
-}
-
 func articleResolver(p graphql.ResolveParams) (interface{}, error) {
-	id, ok := p.Args["id"]
+	id, ok := util.ConvGQLParamaterToUint(p.Args["id"])
 	if !ok {
-		return nil, errors.New("ID is missing")
+		return nil, errors.New("invalid article ID")
 	}
-	// here we should search for an article with id, but for now:
-	a := &TempArticle{id.(string), "Good job!"}
-	return a, nil
+	return service.Lookup().GetArticle(p.Context, id)
 }
 
 func init() {

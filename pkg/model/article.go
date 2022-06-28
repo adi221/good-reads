@@ -41,7 +41,7 @@ func (form ArticleCreateForm) Hash() string {
 // Article structure definition
 type Article struct {
 	ID         uint       `json:"id,omitempty"`
-	UserID     uint       `json:"userId,omitempty"`
+	UserID     *uint      `json:"userId,omitempty"`
 	CategoryID *uint      `json:"categoryId,omitempty"`
 	Title      string     `json:"title,omitempty"`
 	Text       *string    `json:"text,omitempty"`
@@ -53,3 +53,9 @@ type Article struct {
 	CreatedAt  *time.Time `json:"created_at,omitempty"`
 	UpdatedAt  *time.Time `json:"updated_at,omitempty"`
 }
+
+// Codes for article HttpErrors
+const (
+	CategoryNotProvided = "ERR_CATEGORY_NOT_PROVIDED"
+	ArticleNonExist     = "ERR_ARTICLE_NON_EXIST"
+)
