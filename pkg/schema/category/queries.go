@@ -2,6 +2,7 @@ package category
 
 import (
 	"errors"
+	"reflect"
 
 	"github.com/adi221/good-reads/pkg/model"
 	"github.com/adi221/good-reads/pkg/schema"
@@ -22,8 +23,13 @@ var categoriesQueryField = &graphql.Field{
 }
 
 func categoriesResolver(p graphql.ResolveParams) (interface{}, error) {
-	filter := p.Args["filter"].(map[string]interface{})
-	filterSchema := model.NewFilterSchema(filter)
+	filter := p.Args["filter"]
+	v := reflect.ValueOf(filter)
+	var filterSchema model.FilterSchema
+	switch v.Kind() {
+	case reflect.Map:
+		filterSchema = model.NewFilterSchema(filter.(map[string]interface{}))
+	}
 	return service.Lookup().GetCategories(p.Context, filterSchema)
 }
 
@@ -38,7 +44,7 @@ var categoryQueryField = &graphql.Field{
 }
 
 func categoryResolver(p graphql.ResolveParams) (interface{}, error) {
-	id, ok := util.ConvGQLStringToUint(p.Args["id"])
+	id, ok := util.ConvGQLParamaterToUint(p.Args["id"])
 	if !ok {
 		return nil, errors.New("invalid category ID")
 	}

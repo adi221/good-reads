@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"strings"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/adi221/good-reads/pkg/model"
 )
 
@@ -49,13 +50,12 @@ func mapRowToArticle(row *sql.Row) (*model.Article, error) {
 	return article, nil
 }
 
-// CreateArticleForUser creates an article into the DB
 func (pg *DB) CreateArticleForUser(uid uint, form model.ArticleCreateForm) (*model.Article, error) {
 	query, args, _ := pg.psql.Insert(
 		articlesTable,
 	).Columns(
-		"userId",
-		"categoryId",
+		"\"userId\"",
+		"\"categoryId\"",
 		"title",
 		"text",
 		"html",
@@ -63,7 +63,6 @@ func (pg *DB) CreateArticleForUser(uid uint, form model.ArticleCreateForm) (*mod
 		"image",
 		"hash",
 		"status",
-		"updatedAt",
 	).Values(
 		uid,
 		form.CategoryID,
@@ -74,9 +73,18 @@ func (pg *DB) CreateArticleForUser(uid uint, form model.ArticleCreateForm) (*mod
 		form.Image,
 		form.Hash(),
 		"unread",
-		"NOW()",
 	).Suffix(
 		"RETURNING " + strings.Join(articleColumns, ","),
+	).ToSql()
+	row := pg.db.QueryRow(query, args...)
+	return mapRowToArticle(row)
+}
+
+func (pg *DB) GetArticleByID(id uint) (*model.Article, error) {
+	query, args, _ := pg.psql.Select(articleColumns...).From(
+		articlesTable,
+	).Where(
+		sq.Eq{"id": id},
 	).ToSql()
 	row := pg.db.QueryRow(query, args...)
 	return mapRowToArticle(row)

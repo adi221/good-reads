@@ -50,6 +50,9 @@ var articleType = graphql.NewObject(
 			"categoryId": &graphql.Field{
 				Type: graphql.Int,
 			},
+			"userId": &graphql.Field{
+				Type: graphql.Int,
+			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},

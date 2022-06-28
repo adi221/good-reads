@@ -16,21 +16,17 @@ var addArticleMutationField = &graphql.Field{
 			Type: graphql.NewNonNull(graphql.String),
 		},
 		"categoryId": &graphql.ArgumentConfig{
-			Type: graphql.ID,
+			Type: graphql.NewNonNull(graphql.Int),
 		},
 	},
 	Resolve: addArticleResolver,
 }
 
 func addArticleResolver(p graphql.ResolveParams) (interface{}, error) {
-	var categoryId *uint
-	if val, ok := util.ConvGQLStringToUint(p.Args["categoryId"]); ok {
-		categoryId = &val
-	}
 	url, _ := p.Args["url"].(string)
 	form := model.ArticleCreateForm{
 		URL:        &url,
-		CategoryID: categoryId,
+		CategoryID: util.GetGQLUintParameter(p.Args["categoryId"]),
 	}
 
 	return service.Lookup().CreateArticle(p.Context, form)

@@ -20,7 +20,10 @@ func (reg *Registry) CreateCategory(ctx context.Context, category model.Category
 func (reg *Registry) GetCategory(ctx context.Context, id uint) (*model.Category, error) {
 	uid := getCurrentUserIDFromContext(ctx)
 	category, err := reg.db.GetCategoryByID(id)
-	if err != nil || category == nil || *category.UserID != uid {
+	if err != nil {
+		return nil, err
+	}
+	if category == nil || *category.UserID != uid {
 		return nil, helper.NewHttpError(
 			model.CategoryNonExist,
 			http.StatusNotFound,

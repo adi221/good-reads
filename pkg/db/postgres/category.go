@@ -77,19 +77,8 @@ func (pg *DB) GetCategoriesByUser(uid uint, filter model.FilterSchema) (*model.G
 		return nil, err
 	}
 
-	offset := uint(0)
-	if filter.Offset != nil {
-		offset = *filter.Offset
-	}
+	builder = addFiltersToQuery(builder, filter)
 
-	limit := uint(20)
-	if filter.Limit != nil {
-		limit = *filter.Limit
-	}
-
-	builder = builder.Offset(uint64(offset)).Limit(uint64(limit))
-
-	// TODO: add sort by and sort order to query
 	query, args, _ := builder.ToSql()
 	rows, err := pg.db.Query(query, args...)
 

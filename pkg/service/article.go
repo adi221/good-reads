@@ -2,23 +2,34 @@ package service
 
 import (
 	"context"
+	"net/http"
 
+	"github.com/adi221/good-reads/pkg/helper"
 	"github.com/adi221/good-reads/pkg/model"
 )
 
 func (reg *Registry) CreateArticle(ctx context.Context, form model.ArticleCreateForm) (*model.Article, error) {
-	// uid := getCurrentUserIDFromContext(ctx)
-	// For now
-	var uid uint = 1232122
+	uid := getCurrentUserIDFromContext(ctx)
 
 	var category *model.Category
 	if form.CategoryID != nil {
-		// TODO: check if category actually exists later on
-		category = &model.Category{}
+		cat, err := reg.GetCategory(ctx, *form.CategoryID)
+		if err != nil {
+			reg.logger.Info().Err(err).Uint(
+				"uid", uid,
+			).Str("title", form.TruncatedTitle()).Msg("unable to create article")
+			return nil, err
+		}
+		category = cat
 	}
 
 	if category == nil {
 		reg.logger.Error().Msg("Category ID must be provided")
+		return nil, helper.NewHttpError(
+			model.CategoryNotProvided,
+			http.StatusBadRequest,
+			"Category ID must be provided",
+		)
 	}
 
 	if form.URL != nil && !form.IsComplete() {
@@ -74,4 +85,20 @@ func (reg *Registry) scrapOriginalArticle(ctx context.Context, article *model.Ar
 	}
 
 	return err
+}
+
+func (reg *Registry) GetArticle(ctx context.Context, id uint) (*model.Article, error) {
+	uid := getCurrentUserIDFromContext(ctx)
+	article, err := reg.db.GetArticleByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if article == nil || *article.UserID != uid {
+		return nil, helper.NewHttpError(
+			model.ArticleNonExist,
+			http.StatusNotFound,
+			"Article not found",
+		)
+	}
+	return article, nil
 }
