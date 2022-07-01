@@ -25,10 +25,12 @@ interface MeResponse {
 const AuthProvider: FC<Props> = ({ children }) => {
   const { loading, data, error } = useQuery(Me)
 
+  const renderChildren = (contextValue: AuthContextType) => <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+
   const render = matchResponse<MeResponse>({
     Loading: () => <LoadingPage/>,
-    Error: (err) => <div>{JSON.stringify(err)}</div>,
-    Data: ({ me: user }) => <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>,
+    Error: (err) => renderChildren({ user: null }),
+    Data: ({ me: user }) => renderChildren({ user }),
   })
 
   return render(loading, data, error)

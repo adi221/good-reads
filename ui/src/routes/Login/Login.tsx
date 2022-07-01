@@ -7,7 +7,7 @@ import {
   ShowcaseImg,
   Showcase,
   ShowcaseTitle,
-} from './LoginPage.styles';
+} from './Login.styles';
 import mockup from '../../assets/img/mockup.png';
 import { transition } from '../../utils/animations';
 import LoginForm from './LoginForm/LoginForm';

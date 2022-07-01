@@ -7,7 +7,7 @@ import {
   ShowcaseImg,
   Showcase,
   ShowcaseTitle,
-} from './SignUpPage.styles';
+} from './SignUp.styles';
 import SignUpForm from './SignUpForm/SignUpForm';
 import mockup from '../../assets/img/mockup.png';
 import { transition } from '../../utils/animations';
