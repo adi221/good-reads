@@ -1,10 +1,10 @@
 import { FC } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextField from '@mui/material/TextField';
-import { loginFormSchema } from './LoginForm.schema'
+import { signUpFormSchema } from './SignUpForm.schema'
 import {
   StyledForm,
   CallToAction,
@@ -12,13 +12,19 @@ import {
   FormContainer,
   StyledHeader,
   StyledButton
-} from './LoginForm.styles';
+} from './SignUpForm.styles';
 import { Subtitle1 } from '../../../styles/typography';
-import { LoginUser } from '../../../apollo/users/mutations';
+import { SignUpUser } from '../../../apollo/users/mutations';
 import { RoutesDict } from '../../../utils/enums';
 import { getGraphQLErrors } from '../../../utils/graphql';
-import { UserErrCodes } from '../../../services/server/users';
+import { UserErrCodes } from '../../../services/server/users'
 import { useMessage } from '../../../contexts/MessageContext'
+
+interface SignUpFormFields {
+  username: string
+  email: string
+  password: string
+}
 
 export const formVariant = {
   exit: { y: '5rem', opacity: 0 },
@@ -28,12 +34,14 @@ export const transition = {
   duration: 0.2,
 };
 
-interface LoginFormFields {
-  usernameOrEmail: string
+interface SignUpFormFields {
+  username: string
+  email: string
   password: string
 }
 
-const LoginForm: FC = () => {
+
+const SignUpForm: FC = () => {
   const navigate = useNavigate()
   const { showMessage } = useMessage()
 
@@ -41,30 +49,32 @@ const LoginForm: FC = () => {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<LoginFormFields>({
-    resolver: yupResolver(loginFormSchema),
+  } = useForm<SignUpFormFields>({
+    resolver: yupResolver(signUpFormSchema),
   })
 
-  const onLoginCompleted = () => {
-    navigate(RoutesDict.HOME)
+  const onSignUpCompleted = () => {
+    navigate(RoutesDict.ARTICLES)
   }
 
-  const onLoginError = (error: ApolloError) => {
+  const onSignUpError = (error: ApolloError) => {
     const errCodes = getGraphQLErrors(error).map(err => err.code)
-    if (errCodes.includes(UserErrCodes.ERR_USER_NON_EXIST) || errCodes.includes(UserErrCodes.ERR_INCORRECT_CREDS)) {
-      showMessage({ text: 'Username/email or password are incorrect' })
+    if (errCodes.includes(UserErrCodes.ERR_USERNAME_ALREADY_EXISTS)) {
+      showMessage({ text: 'Please select a different username' })
+    } else if (errCodes.includes(UserErrCodes.ERR_EMAIL_ALREADY_EXISTS)) {
+      showMessage({ text: 'Please select a different email'})
     } else {
-      showMessage({ text: 'Failed to log in you up! Please try again'})
+      showMessage({ text: 'Failed to sign you up! Please try again'})
     }
   }
 
-  const [loginUserMutation] = useMutation(LoginUser, {
-    onCompleted: onLoginCompleted,
-    onError: onLoginError
+  const [signUpUserMutation] = useMutation(SignUpUser, { 
+    onCompleted: onSignUpCompleted,
+    onError: onSignUpError,
   })
 
-  const onSubmit = (data: LoginFormFields) => {
-    loginUserMutation({
+  const onSubmit = (data: SignUpFormFields) => {
+    signUpUserMutation({
       variables: data
     })
   }
@@ -75,14 +85,21 @@ const LoginForm: FC = () => {
       exit="exit"
       transition={transition}
     >
-      <StyledHeader>Log in</StyledHeader>
+      <StyledHeader>Sign up</StyledHeader>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
         <TextField
-          label='Username or email'
+          label='Username'
           type='text'
-          {...register('usernameOrEmail')}
-          error={!!errors?.usernameOrEmail}
-          helperText={errors?.usernameOrEmail?.message}
+          {...register('username')}
+          error={!!errors?.username}
+          helperText={errors?.username?.message}
+        />
+        <TextField
+          label='Email'
+          type='text'
+          {...register('email')}
+          error={!!errors?.email}
+          helperText={errors?.email?.message}
         />
         <TextField
           label='Password'
@@ -96,15 +113,15 @@ const LoginForm: FC = () => {
           type="submit"
         >
           <Subtitle1>
-            Log in
+            Sign up
           </Subtitle1>
         </StyledButton>
         <CallToAction>
-          Don&apos;t have an account?{' '}
+          Already have an account?{' '}
           <HighlightedLink
-            to={RoutesDict.SIGN_UP}
+            to={RoutesDict.LOGIN}
           >
-            Sign up
+            Log in 
           </HighlightedLink>
         </CallToAction>
       </StyledForm>
@@ -112,4 +129,4 @@ const LoginForm: FC = () => {
   )
 }
 
-export default LoginForm
+export default SignUpForm
