@@ -5,7 +5,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 import Routes from './routes/Routes';
 import { RoutesDict } from './utils/enums';
 
-const routesWithoutSidebar = new Set<string>([RoutesDict.LOGIN, RoutesDict.SIGN_UP])
+const routesWithoutSidebar = new Set<string>([RoutesDict.LOGIN, RoutesDict.SIGN_UP, RoutesDict.GRAPHIQL])
 
 const App = () => {
   const { pathname } = useLocation()

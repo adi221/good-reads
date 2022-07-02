@@ -19,6 +19,7 @@ import { RoutesDict } from '../../../utils/enums';
 import { getGraphQLErrors } from '../../../utils/graphql';
 import { UserErrCodes } from '../../../services/server/users'
 import { useMessage } from '../../../contexts/MessageContext'
+import { MutationSignUpUserArgs, User } from '../../../generated/graphql'
 
 interface SignUpFormFields {
   username: string
@@ -68,7 +69,7 @@ const SignUpForm: FC = () => {
     }
   }
 
-  const [signUpUserMutation] = useMutation(SignUpUser, { 
+  const [signUpUserMutation] = useMutation<User, MutationSignUpUserArgs>(SignUpUser, { 
     onCompleted: onSignUpCompleted,
     onError: onSignUpError,
   })
