@@ -19,6 +19,7 @@ import { RoutesDict } from '../../../utils/enums';
 import { getGraphQLErrors } from '../../../utils/graphql';
 import { UserErrCodes } from '../../../services/server/users';
 import { useMessage } from '../../../contexts/MessageContext'
+import { MutationLoginUserArgs, User } from '../../../generated/graphql';
 
 export const formVariant = {
   exit: { y: '5rem', opacity: 0 },
@@ -58,7 +59,7 @@ const LoginForm: FC = () => {
     }
   }
 
-  const [loginUserMutation] = useMutation(LoginUser, {
+  const [loginUserMutation] = useMutation<User, MutationLoginUserArgs>(LoginUser, {
     onCompleted: onLoginCompleted,
     onError: onLoginError
   })
